@@ -80,7 +80,7 @@ exports.createRoom = async (req, res) => {
 };
 
 
-exports.changeRoomImage = async (req, res) => {
+exports.UpdateRoomImage = async (req, res) => {
     try {
         const { id, imageId } = req.params;
 
@@ -136,58 +136,7 @@ exports.changeRoomImage = async (req, res) => {
 };
 
 
-// exports.changeRoomImage = async (req, res) =>{
-//     try{
-//         const {id} = req.params;
-//         const findRoom = await roomModel.findById(id);
 
-//         if(findRoom == null){
-//             return res.status(404).json({
-//                 message: "Room Not Found"
-//             })
-//         }
-
-//         //This uploads the image to cloudinary
-// const cloudImage = await cloudinary.uploader.upload(req.file.path, (err)=>{
-//     if(err){
-//         return res.status(404).json({
-//             message: err.message
-//         })
-//     }
-// })
-//         const newPhoto = {
-//             imageUrl: cloudImage.secure_url, 
-//             public_id: cloudImage.public_id
-//         };
-
-//         const delImage = await cloudinary.uploader.destroy(findRoom.images.public_id, (err)=>{
-//             if(err){
-//                 return res.status(404).json({
-//                     message: err.message
-//                 })
-//             }
-//         })
-
-//          //This removes the file from the upload folder
-//         fs.unlink(req.file.path, (err)=>{
-//             if(err){
-//                 console.log(err.message)
-//             }else{
-//                 console.log("Previous File Removed Successfully")
-//             }
-//         })
-
-//         const updateImage = await roomModel.findByIdAndUpdate(id, newPhoto, {new: true})
-//         return res.status(200).json({
-//             message: "Image Successfully Updated"
-//         })
-//     }catch(err){
-//         res.status(500).json({
-//             message: "Internal Server Error" + err.message,
-
-//         })
-//     }
-// }
 
 exports.deleteRoomImage = async (req, res) => {
     try {
