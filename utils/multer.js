@@ -1,39 +1,43 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
 
-// Ensure upload directory exists
-const uploadDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
+const uploadDir = path.join(__dirname, '../public/uploads');
+
+try {
+    if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+    }
+} catch (error) {
+    console.error('Error creating upload directory:', error);
 }
 
-// Configure multer storage
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, uploadDir); // Use correct upload path
+        cb(null, uploadDir);
     },
     filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const ext = path.extname(file.originalname); // Get file extension properly
+        const uniqueSuffix = crypto.randomBytes(8).toString('hex');
+        const ext = path.extname(file.originalname);
         cb(null, `${file.fieldname}_${uniqueSuffix}${ext}`);
     }
 });
 
-// File filter to accept only images
 const fileFilter = (req, file, cb) => {
     if (file.mimetype.startsWith('image/')) {
         cb(null, true);
     } else {
-        cb(new Error('Invalid file format: Images only!'), false);
+        const error = new Error('Invalid file format: Images only!');
+        error.status = 400;
+        cb(error, false);
     }
 };
 
-// Configure limits and apply multer middleware
 const upload = multer({
     storage,
     fileFilter,
-    limits: { fileSize: 2 * 1024 * 1024 }
+    limits: { fileSize: process.env.MAX_FILE_SIZE || 2 * 1024 * 1024 }
 });
 
 module.exports = upload;

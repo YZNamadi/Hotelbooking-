@@ -25,13 +25,13 @@ exports.register = async (req, res) => {
       email,
       password: hashedPassword,
     });
-    const token = await jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {expiresIn: "10mins"});
-    // const link = `${req.protocol}://${req.get("host")}/api/v1/verify/${token}`;
+    
+    const token = await jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {expiresIn: "5days"});
     const link = `${req.protocol}://${req.get("host")}/verify-user/${token}`;
     const firstName = user.fullName.split(" ")[0];
     const mailDetails = {
       email: email,
-      subject: "Welcome to AI Podcast",
+      subject: "Welcome to YZN",
       html: signUpTemplate(firstName, link),
     };
 
@@ -119,7 +119,7 @@ exports.resendVerificationLink = async (req, res) => {
       });
     }
     //Generate a token for the user
-    const token = await jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {expiresIn: "30mins"});
+    const token = await jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {expiresIn: "5days"});
     //Create a verification link for the user
     const link = `${req.protocol}://${req.get("host")}/api/v1/verify/${token}`;
     const firstName = user.fullName.split(" ")[0];
@@ -170,7 +170,7 @@ exports.verifyUserAndResend = async (req, res) => {
 
 
                     //Generate a new token for the user
-                    const newToken = await jwt.sign({userId: user._id}, process.env.JWT_SECRET, {expiresIn: "30mins"});
+                    const newToken = await jwt.sign({userId: user._id}, process.env.JWT_SECRET, {expiresIn: "5days"});
                     //Create a verification link for the user
                     const link = `${req.protocol}://${req.get("host")}/api/v1/verify-user/${newToken}`;
                     const firstName = user.fullName.split(" ")[0];

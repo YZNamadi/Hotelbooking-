@@ -1,39 +1,49 @@
 const mongoose = require('mongoose');
 
-const roomSchema = new mongoose.Schema({
-    roomName:{
-        type: String,
-        required: true
+const roomSchema = new mongoose.Schema(
+    {
+        roomName: {
+            type: String,
+            required: true,
+            trim: true, // Removes unwanted spaces
+        },
+        price: {
+            type: Number,
+            required: true,
+            min: 0, // Ensures price cannot be negative
+        },
+        description: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        roomNumber: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        images: [
+            {
+                imageId: {
+                    type: mongoose.Schema.Types.ObjectId, // Use ObjectId if image references another collection
+                    required: true,
+                },
+                imageUrl: {
+                    type: String,
+                    required: true,
+                    trim: true,
+                },
+            }
+        ],
+        category: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Category', // Ensure it matches the correct Category model name
+            required: true,
+        },
     },
-    price:{
-        type: Number,
-        required: true
-    },
-    description:{
-        type: String,
-        required: true
-    },
-    roomNumber:{
-        type: String,
-        required: true
-    },
-    images:[{
-        imageId:{
-        type: String,
-        required: true
-    },
-    imageUrl:{
-        type:String,
-        required:true
-    }
-}],
-   category :{
-        type: mongoose.SchemaTypes.ObjectId, 
-        ref: 'Categories',
-        required: true
-    },
-}, {timestamps: true});
+    { timestamps: true }
+);
 
-const roomModel = moongoose.model('Rooms', roomSchema)
+const roomModel = mongoose.model('Room', roomSchema);
 
 module.exports = roomModel;

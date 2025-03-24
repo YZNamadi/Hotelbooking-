@@ -1,40 +1,44 @@
-const nodeMailer = require('nodemailer');
+const nodemailer = require('nodemailer');
 
 const sendMail = async (options) => {
-  // Validate that a recipient email is provided
-  if (!options.email) {
-    throw new Error('Recipient email is required.');
-  }
-
-  // Create the transporter using Gmail service
-  const transporter = await nodeMailer.createTransport({
-    host: 'smtp.gmail.com',
-    service: process.env.SERVICE,
-    secure: true,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-    tls: {
-      rejectUnauthorized: false,
-    }
-  });
-
-  // Setup email options
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: options.email,
-    subject: options.subject,
-    text: options.text,
-    html: options.html
-  };
-
   try {
-    // Send the email
+    if (!options.email) {
+      throw new Error('Recipient email is required.');
+    }
+
+    // Create transporter
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 587, // Use 465 for secure, 587 for TLS
+      secure: false, // Use `true` only if port 465
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
+
+    // Verify transporter connection
+    await transporter.verify();
+
+    // Email options
+    const mailOptions = {
+      from: `"Your App Name" <${process.env.EMAIL_USER}>`,
+      to: options.email,
+      subject: options.subject,
+      text: options.text,
+      html: options.html,
+    };
+
+    // Send email
     let info = await transporter.sendMail(mailOptions);
-    console.log('Email sent successfully:', info.response);
+    console.log('Email sent successfully:', info.messageId);
+
+    return info;
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error('Error sending email:', error.message);
     throw error;
   }
 };

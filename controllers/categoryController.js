@@ -3,9 +3,9 @@ const userModel = require('../models/user')
 
 exports.createCategory = async(req, res) =>{
     try{
-        //Extract the User ID fom the req.body object
+        //Extract the User ID fom the req body object
         const {userId} = req.user;
-        //Find user and check if it still exists
+        //Find the user and check if it still exists
         const user = await userModel.findById(userId);
         if(!user) {
             return res.status(404).json({
@@ -13,13 +13,13 @@ exports.createCategory = async(req, res) =>{
             })
         }
 
-        // Extract category details from req.body
+        // Extract category details from request body
         const { name, amenities } = req.body;
         if (!name || !amenities) {
             return res.status(400).json({ message: "Name and amenities are required" });
         }
 
-
+        //Create a new Instance of the category
         const category = new categoryModel({
             name,
             amenities,
@@ -28,10 +28,10 @@ exports.createCategory = async(req, res) =>{
                 adminName: user.fullName
             }
         });
-
+        //Save the changes to the database
         await category.save(
 
-        
+        //Send a success response
         res.status(200).json({
             message: 'Category Created Successfully',
             data: category
@@ -48,12 +48,12 @@ exports.createCategory = async(req, res) =>{
 
 exports.getAllCategory = async (req, res) => {
     try {
-        // Fetch all categories from the database
+        //Find all rooms in the database
         const categories = await categoryModel.find().populate('rooms', ['roomName', 'description', 'price']);  
-        
+        //Send a response to the user
         res.status(200).json({
             message: "Categories fetched successfully",
-            data: rooms
+            data: categories
         });
     } catch (error) {
         console.log(error.message);

@@ -1,67 +1,63 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const userModel = require("../models/user");
+
 exports.authenticate = async (req, res, next) => {
     try {
-        //Extract the token from the request header
-        const auth = req.header("Authorization");
+        // Extract the token from the request header
+        const authHeader = req.header("Authorization");
 
-        //Check if token is provided
-        if (auth === undefined) {
+        // Check if token is provided
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
             return res.status(401).json({
-                message: "Access denied, token must be provided",
+                message: "Access denied. No token provided or invalid format",
             });
         }
 
-        const token = auth.split(" ")[1];
-        if(token === undefined){
-            return res.status(401).json({
-                message: "Access denied, token must be provided",
-            });
-        }
-        //This line of code verifies if the token is still valid that is it has not expired
-        const decodedToken = await jwt.verify(token, process.env.JWT_SECRET)
+        const token = authHeader.split(" ")[1];
 
-        //Checck fo the user and throw an error if the user is not found
+        // Verify if the token is valid and not expired
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+
+        // Check for the user and throw an error if not found
         const user = await userModel.findById(decodedToken.userId);
-        if(user === null){
+        if (!user) {
             return res.status(404).json({
                 message: "Authentication failed: User not found",
             });
         }
 
-        
-
         req.user = decodedToken;
         next();
-     
     } catch (error) {
+        console.error("Authentication Error:", error.message);
+
         if (error instanceof jwt.TokenExpiredError) {
             return res.status(401).json({
-                message: "Sessiion timed-out, please login to continue",
+                message: "Session timed out. Please log in again.",
             });
         }
-        console.log(error.message);
+
         res.status(500).json({
             message: "Internal server error",
         });
     }
 };
 
-exports.adminAuth = async (req, res, next) => {
-    try{
-        if(req.user.isAdmin === true){
+// Ensure only super admins can access certain routes
+exports.superAdminAuth = async (req, res, next) => {
+    try {
+        if (req.user.isSuperAdmin) {
             next();
-        }else{
+        } else {
             return res.status(403).json({
-                message: "Unauthorized: Not an admin",
+                message: "Unauthorized: Only super admins can perform this action",
             });
         }
-
-    }catch(error){
-        console.log(error.message);
+    } catch (error) {
+        console.error("Super Admin Auth Error:", error.message);
         res.status(500).json({
             message: "Internal server error",
         });
     }
-}
+};
