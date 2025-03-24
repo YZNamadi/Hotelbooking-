@@ -20,7 +20,16 @@ const swaggerOptions = {
             version: "1.0.0",
             description: "API documentation for the project",
         },
-        servers: [{ url: "http://localhost:3000" }],
+        servers: [
+            {
+              url: 'https://capitalshop-3its.onrender.com',
+              description: 'Production server',
+            },
+            {
+              url: 'http://localhost:3000',
+              description: 'Development server',
+            },
+          ],
     },
     apis: ['./routes/*.js'], 
 };
