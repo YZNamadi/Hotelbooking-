@@ -131,6 +131,128 @@ const upload = require('../utils/multer')
 
 roomRouter.post('/room/:id', upload.array('images', 10), createRoom);
 
+// /**
+//  * @swagger
+//  * /room/{id}:
+//  *   put:
+//  *     summary: Update a room's details
+//  *     description: Allows an admin to update a room's details such as name, description, and price. Authentication required.
+//  *     tags:
+//  *       - Rooms
+//  *     security:
+//  *       - bearerAuth: [] # Requires authentication
+//  *     parameters:
+//  *       - in: path
+//  *         name: id
+//  *         required: true
+//  *         schema:
+//  *           type: string
+//  *         description: The ID of the room to update
+//  *         example: "605c72b1f1a3c619946b57da"
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             properties:
+//  *               roomName:
+//  *                 type: string
+//  *                 description: Updated name of the room
+//  *                 example: "Executive Suite"
+//  *               description:
+//  *                 type: string
+//  *                 description: Updated description of the room
+//  *                 example: "A modern and luxurious executive suite"
+//  *               price:
+//  *                 type: number
+//  *                 description: Updated price per night
+//  *                 example: 350
+//  *     responses:
+//  *       200:
+//  *         description: Room updated successfully
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: object
+//  *               properties:
+//  *                 message:
+//  *                   type: string
+//  *                   example: "Room updated successfully"
+//  *                 data:
+//  *                   type: object
+//  *                   properties:
+//  *                     _id:
+//  *                       type: string
+//  *                       description: Room ID
+//  *                       example: "605c72b1f1a3c619946b57da"
+//  *                     roomName:
+//  *                       type: string
+//  *                       description: Updated room name
+//  *                       example: "Executive Suite"
+//  *                     description:
+//  *                       type: string
+//  *                       description: Updated room description
+//  *                       example: "A modern and luxurious executive suite"
+//  *                     price:
+//  *                       type: number
+//  *                       description: Updated price per night
+//  *                       example: 350
+//  *       400:
+//  *         description: Bad Request - Invalid Input
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: object
+//  *               properties:
+//  *                 error:
+//  *                   type: string
+//  *                   example: "Room name is required"
+//  *       401:
+//  *         description: Unauthorized - User is not authenticated
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: object
+//  *               properties:
+//  *                 error:
+//  *                   type: string
+//  *                   example: "Authentication required"
+//  *       403:
+//  *         description: Forbidden - User is not an admin
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: object
+//  *               properties:
+//  *                 error:
+//  *                   type: string
+//  *                   example: "Access denied. Admins only."
+//  *       404:
+//  *         description: Not Found - Room not found
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: object
+//  *               properties:
+//  *                 message:
+//  *                   type: string
+//  *                   example: "Room not found"
+//  *       500:
+//  *         description: Internal Server Error
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: object
+//  *               properties:
+//  *                 error:
+//  *                   type: string
+//  *                   example: "Failed to update room"
+//  */
+
+// roomRouter.put('/room/:id', updateRoomImage);
+
+
 /**
  * @swagger
  * /room/{id}/{imageId}:
@@ -332,10 +454,9 @@ roomRouter.put('/room/:id/:imageId', upload.single('image'), changeRoomImage);
  *                   example: "Internal Server Error: Failed to delete image"
  */
 
-roomRouter.put('/room/:id/:imageId', upload.single('image'), updateRoomImage);
+
 roomRouter.delete('/room/:id/:imageId', deleteRoomImage);
-// PUT /api/rooms/:id/image/:imageId
-// roomRouter.post('/room/:id', createRoom);
+
 
 module.exports = roomRouter
 

@@ -57,7 +57,7 @@ exports.createRoom = async (req, res) => {
 };
 
 
-exports.UpdateRoomImage = async (req, res) => {
+exports.changeRoomImage = async (req, res) => {
     try {
         const { id, imageId } = req.params;
 
